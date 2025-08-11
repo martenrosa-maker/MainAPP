@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Vencedor do Jogo!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to bottom right, red, yellow);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 4em;
+      margin-top: 100px;
+      z-index: 2;
+      position: relative;
+      text-shadow: 2px 2px 5px black;
+    }
+
+    /* Texto com zoom e brilho pulsante */
+    .winner-message {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 3em;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 5px black;
+      animation: zoomIn 2s ease-out forwards, pulse 1s infinite alternate;
+      z-index: 3;
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      from {
+        text-shadow: 0 0 10px white;
+        opacity: 1;
+      }
+      to {
+        text-shadow: 0 0 30px white;
+        opacity: 0.7;
+      }
+    }
+
+    /* Foguetes */
+    .rocket {
+      position: absolute;
+      width: 50px;
+      animation: rocket 3s linear infinite;
+    }
+
+    @keyframes rocket {
+      0% {
+        bottom: -100px;
+        transform: rotate(0deg);
+      }
+      100% {
+        bottom: 110%;
+        transform: rotate(720deg);
+      }
+    }
+
+    .rocket:nth-child(2) { left: 10%; animation-delay: 0s; }
+    .rocket:nth-child(3) { left: 40%; animation-delay: 1s; }
+    .rocket:nth-child(4) { left: 70%; animation-delay: 2s; }
+
+    /* Carinhas animadas */
+    .face {
+      position: absolute;
+      font-size: 2em;
+      animation: float 10s linear infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes float {
+      0% {
+        top: 110%;
+        transform: translateX(0) rotate(0deg);
+      }
+      100% {
+        top: -10%;
+        transform: translateX(100px) rotate(360deg);
+      }
+    }
+
+    .face:nth-child(5) { left: 20%; animation-delay: 0s; }
+    .face:nth-child(6) { left: 50%; animation-delay: 2s; }
+    .face:nth-child(7) { left: 80%; animation-delay: 4s; }
+
+    /* Botão para reproduzir som novamente */
+    #replay {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      color: red;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px black;
+      z-index: 10;
+    }
+
+    #replay:hover {
+      background: gold;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mensagem com zoom e brilho -->
+  <div class="winner-message">🎉 Você foi o vencedor! 🎉</div>
+
+  <h1>Jogador 1 é o Vencedor!</h1>
+
+  <!-- Foguetes -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Simple_rocket_icon.svg/512px-Simple_rocket_icon.svg.png" class="rocket" style="height: 60px;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Simple_rocket_icon.svg/512px-Simple_rocket_icon.svg.png" class="rocket" style="height: 60px;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Simple_rocket_icon.svg/512px-Simple_rocket_icon.svg.png" class="rocket" style="height: 60px;">
+
+  <!-- Carinhas -->
+  <div class="face">😊</div>
+  <div class="face">😄</div>
+  <div class="face">😁</div>
+
+  <!-- Som de aplausos -->
+  <audio id="clapSound" autoplay>
+    <source src="https://www.soundjay.com/human/applause-01.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <!-- Botão para reproduzir som novamente -->
+  <button id="replay" onclick="document.getElementById('clapSound').play()">🔊 Reproduzir Aplausos</button>
+</body>
+</html>

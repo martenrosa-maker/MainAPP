@@ -1,27 +1,266 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Marten Alexandre da Rosa</title>
-    <style>
-        body {
-            background-color: black;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 50px;
-        }
-        h1 {
-            color: #333;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Roleta com Quiz e Pontuação</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 40px;
+      background: #f0f0f0;
+      height: 100vh;
+    }
+
+    .scoreboard {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 10px solid #444;
+      margin-bottom: 20px;
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+      transform: rotate(0deg);
+    }
+
+    .wheel div {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      color: #fff;
+      text-align: center;
+      line-height: 150px;
+      transform-origin: 100% 100%;
+      font-weight: bold;
+    }
+
+    .wheel .slice1 { background: #FF6384; transform: rotate(0deg); }
+    .wheel .slice2 { background: #36A2EB; transform: rotate(60deg); }
+    .wheel .slice3 { background: #FFCE56; transform: rotate(120deg); }
+    .wheel .slice4 { background: #4BC0C0; transform: rotate(180deg); }
+    .wheel .slice5 { background: #9966FF; transform: rotate(240deg); }
+    .wheel .slice6 { background: #FF9F40; transform: rotate(300deg); }
+
+    .pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 20px solid red;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    #quiz {
+      margin-top: 20px;
+      max-width: 400px;
+      text-align: center;
+      display: none;
+    }
+
+    #quiz p {
+      font-weight: bold;
+    }
+
+    .option {
+      margin: 5px 0;
+      padding: 8px;
+      background: #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .correct {
+      background: #a8e6a1;
+    }
+
+    .wrong {
+      background: #f8a1a1;
+    }
+
+    #feedback {
+      display: none;
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 10px;
+      animation: zoomIn 0.5s ease-out;
+    }
+
+    #feedback.correct {
+      color: green;
+    }
+
+    #feedback.wrong {
+      color: red;
+    }
+
+    @keyframes zoomIn {
+      from {
+        transform: scale(0.2);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Seja bem vindo a minha página HTML</h1>
-    <h6>Marten Alexandre da Rosa</h6>
-    <p>Tecnólogo em Análise e Desenvolvimento de Sistemas </p>
 
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel">
+      <div class="slice1">1</div>
+      <div class="slice2">2</div>
+      <div class="slice3">3</div>
+      <div class="slice4">4</div>
+      <div class="slice5">5</div>
+      <div class="slice6">6</div>
+    </div>
+  </div>
+  <div class="scoreboard">Pontuação: <span id="score">0</span></div>
+
+  <button onclick="spin()">Girar</button>
+
+  <div id="quiz">
+    <p id="question">Pergunta será exibida aqui</p>
+    <div id="options"></div>
+  </div>
+
+  <div id="feedback"></div>
+
+  <script>
+    let currentRotation = 0;
+    let score = 0;
+    const scoreDisplay = document.getElementById("score");
+    const feedback = document.getElementById("feedback");
+
+    const questions = {
+      1: {
+        q: "Qual é a capital do Brasil?",
+        options: ["São Paulo", "Brasília", "Rio de Janeiro"],
+        answer: "Brasília"
+      },
+      2: {
+        q: "Quanto é 5 x 3?",
+        options: ["15", "10", "8"],
+        answer: "15"
+      },
+      3: {
+        q: "Qual o maior planeta do sistema solar?",
+        options: ["Terra", "Júpiter", "Marte"],
+        answer: "Júpiter"
+      },
+      4: {
+        q: "Quantos lados tem um triângulo?",
+        options: ["4", "3", "5"],
+        answer: "3"
+      },
+      5: {
+        q: "Qual é o símbolo químico da água?",
+        options: ["H2O", "O2", "CO2"],
+        answer: "H2O"
+      },
+      6: {
+        q: "Em que continente está o Egito?",
+        options: ["Ásia", "Europa", "África"],
+        answer: "África"
+      }
+    };
+
+    function spin() {
+      document.getElementById("quiz").style.display = "none";
+      feedback.style.display = "none";
+      const wheel = document.getElementById('wheel');
+      const randomDegree = Math.floor(Math.random() * 360) + 360 * 5;
+      currentRotation += randomDegree;
+
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        const deg = currentRotation % 360;
+        const segment = Math.floor((360 - deg + 30) % 360 / 60) + 1;
+        showQuestion(segment);
+      }, 4200);
+    }
+
+    function showQuestion(number) {
+      const q = questions[number];
+      const quizDiv = document.getElementById("quiz");
+      const questionText = document.getElementById("question");
+      const optionsDiv = document.getElementById("options");
+
+      questionText.textContent = q.q;
+      optionsDiv.innerHTML = "";
+
+      q.options.forEach(option => {
+        const btn = document.createElement("div");
+        btn.textContent = option;
+        btn.className = "option";
+        btn.onclick = () => {
+          if (btn.classList.contains("answered")) return;
+          btn.classList.add("answered");
+
+          if (option === q.answer) {
+            btn.classList.add("correct");
+            score++;
+            scoreDisplay.textContent = score;
+            showFeedback(true);
+              if(score === 4){
+    window.location.assign("file:///home/chronos/u-7762a5246fed65723a9b1e9480951e667558c102/MyFiles/Downloads/Arquivo%20c/winner.html");
+    }
+              
+          } else {
+            btn.classList.add("wrong");
+            showFeedback(false);
+          }
+        };
+        optionsDiv.appendChild(btn);
+      });
+
+      quizDiv.style.display = "block";
+    }
+
+    function showFeedback(isCorrect) {
+      feedback.textContent = isCorrect ? "Sua resposta está correta!" : "Sua resposta está errada";
+      feedback.className = isCorrect ? "correct" : "wrong";
+      feedback.style.display = "block";
+      feedback.style.animation = "none";
+      feedback.offsetHeight; // reflow
+      feedback.style.animation = "zoomIn 0.5s ease-out";
+
+      setTimeout(() => {
+        feedback.style.display = "none";
+      }, 1500);
+    }
+  </script>
 
 </body>
 </html>

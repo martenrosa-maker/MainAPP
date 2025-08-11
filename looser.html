@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Você perdeu...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to bottom right, #444, #000);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Mensagem central */
+    .loser-message {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3em;
+      font-weight: bold;
+      color: #ccc;
+      opacity: 0;
+      animation: fadeIn 2s ease-out forwards, shake 2s infinite ease-in-out;
+      text-shadow: 2px 2px 5px black;
+      z-index: 2;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+      25% { transform: translate(-50%, -50%) rotate(-1deg); }
+      75% { transform: translate(-50%, -50%) rotate(1deg); }
+    }
+
+    /* Carinhas tristes descendo */
+    .face {
+      position: absolute;
+      font-size: 2em;
+      animation: fall 8s linear infinite;
+      opacity: 0.2;
+    }
+
+    @keyframes fall {
+      0% {
+        top: -10%;
+        transform: translateX(0) rotate(0deg);
+      }
+      100% {
+        top: 110%;
+        transform: translateX(50px) rotate(180deg);
+      }
+    }
+
+    .face:nth-child(2) { left: 15%; animation-delay: 0s; }
+    .face:nth-child(3) { left: 40%; animation-delay: 1s; }
+    .face:nth-child(4) { left: 65%; animation-delay: 2s; }
+    .face:nth-child(5) { left: 80%; animation-delay: 3s; }
+
+    /* Botão para som triste */
+    #sadSoundBtn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: white;
+      border: 1px solid #aaa;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 5px black;
+      z-index: 10;
+    }
+
+    #sadSoundBtn:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mensagem central triste -->
+  <div class="loser-message">😞 Você perdeu...</div>
+
+  <!-- Carinhas tristes caindo -->
+  <div class="face">😢</div>
+  <div class="face">😞</div>
+  <div class="face">☹️</div>
+  <div class="face">😭</div>
+
+  <!-- Som triste -->
+  <audio id="sadSound" autoplay>
+    <source src="https://www.soundjay.com/misc/sad-trombone-01.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <!-- Botão para reproduzir som triste -->
+  <button id="sadSoundBtn" onclick="document.getElementById('sadSound').play()">🔁 Tocar som triste</button>
+
+</body>
+</html>
